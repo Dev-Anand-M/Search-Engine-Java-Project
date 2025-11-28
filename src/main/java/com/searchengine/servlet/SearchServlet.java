@@ -17,7 +17,7 @@ public class SearchServlet extends HttpServlet {
     private SearchEngine searchEngine = new SearchEngine();
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         String query = request.getParameter("query");
@@ -25,6 +25,20 @@ public class SearchServlet extends HttpServlet {
             request.getRequestDispatcher("/index.jsp").forward(request, response);
             return;
         }
+
+        // --- Pagination setup ---
+        int page = 1;
+        int pageSize = 10; // You can change this value
+        String pageParam = request.getParameter("page");
+        if (pageParam != null) {
+            try {
+                page = Integer.parseInt(pageParam);
+                if (page < 1) page = 1;
+            } catch (NumberFormatException e) {
+                page = 1;
+            }
+        }
+        int offset = (page - 1) * pageSize;
 
         // Save to session history
         HttpSession session = request.getSession();
@@ -40,20 +54,25 @@ public class SearchServlet extends HttpServlet {
         }
         session.setAttribute("searchHistory", history);
 
-        // Perform search
-        List<WebPage> results = searchEngine.search(query.trim(), 30);
+        // --- Perform search & pagination ---
+        List<WebPage> allResults = searchEngine.search(query.trim(),1000);
+        int totalResults = allResults.size();
+        int toIndex = Math.min(offset + pageSize, totalResults);
+        List<WebPage> pageResults = (offset < totalResults) ? allResults.subList(offset, toIndex) : new java.util.ArrayList<>();
 
-        // Set attributes
+        // Set attributes for JSP
         request.setAttribute("query", query);
-        request.setAttribute("results", results);
-        request.setAttribute("totalResults", results.size());
-        request.setAttribute("hasResults", !results.isEmpty());
+        request.setAttribute("results", pageResults);
+        request.setAttribute("totalResults", totalResults);
+        request.setAttribute("currentPage", page);
+        request.setAttribute("pageSize", pageSize);
+        request.setAttribute("hasResults", !allResults.isEmpty());
 
         request.getRequestDispatcher("/results.jsp").forward(request, response);
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         doGet(request, response);
     }

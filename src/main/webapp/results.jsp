@@ -4,92 +4,17 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Search Results - Java Search Engine</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #fff;
-        }
-        .header {
-            padding: 20px;
-            border-bottom: 1px solid #ebebeb;
-        }
-        .search-bar {
-            display: flex;
-            align-items: center;
-            max-width: 600px;
-        }
-        .logo {
-            color: #4285f4;
-            font-size: 1.5rem;
-            margin-right: 30px;
-            text-decoration: none;
-        }
-        .search-input {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 25px;
-            font-size: 16px;
-            margin-right: 10px;
-        }
-        .search-button {
-            background: #4285f4;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .results-info {
-            padding: 20px;
-            color: #666;
-            font-size: 14px;
-        }
-        .results {
-            max-width: 600px;
-            padding: 0 20px;
-        }
-        .result-item {
-            margin-bottom: 30px;
-        }
-        .result-title {
-            font-size: 18px;
-            margin-bottom: 5px;
-        }
-        .result-title a {
-            color: #1a0dab;
-            text-decoration: none;
-        }
-        .result-title a:hover {
-            text-decoration: underline;
-        }
-        .result-url {
-            color: #006621;
-            font-size: 14px;
-            margin-bottom: 5px;
-        }
-        .result-snippet {
-            color: #545454;
-            font-size: 14px;
-            line-height: 1.4;
-        }
-        .no-results {
-            padding: 20px;
-            text-align: center;
-            color: #666;
-        }
-    </style>
+    <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body class="results-page">
     <div class="header">
         <div class="search-bar">
-            <a href="index.jsp" class="logo">Java Search Engine</a>
-            <form action="search" method="get" style="display: flex; flex: 1;">
-                <input type="text" name="query" value="${query}" class="search-input">
-                <button type="submit" class="search-button">Search</button>
+            <a href="index.jsp" class="header-logo">Search</a>
+            <form action="search" method="get" class="search-form">
+                <input type="text" name="query" value="${query}" class="results-search-input">
+                <button type="submit" class="results-search-button">Search</button>
             </form>
         </div>
     </div>
@@ -124,6 +49,55 @@
                 </div>
             </c:otherwise>
         </c:choose>
+    </div>
+
+    <!-- Pagination Controls (First, Prev, Numbered, Next, Last) -->
+    <%
+        int currentPage = request.getAttribute("currentPage") != null ? (Integer) request.getAttribute("currentPage") : 1;
+        int pageSize = request.getAttribute("pageSize") != null ? (Integer) request.getAttribute("pageSize") : 10;
+        int totalResults = request.getAttribute("totalResults") != null ? (Integer) request.getAttribute("totalResults") : 0;
+        String queryStr = (String) request.getAttribute("query");
+        int totalPages = (int) Math.ceil((double) totalResults / pageSize);
+
+        int displayPages = 7; // How many numbered page links to show
+        int startPage = Math.max(1, currentPage - displayPages / 2);
+        int endPage = Math.min(totalPages, startPage + displayPages - 1);
+        if(endPage - startPage < displayPages-1) {
+            startPage = Math.max(1, endPage - displayPages + 1);
+        }
+    %>
+    <div class="pagination">
+        <% if (currentPage > 1) { %>
+            <a href="search?query=<%= queryStr %>&page=1" title="First Page">&laquo; First</a>
+            <a href="search?query=<%= queryStr %>&page=<%= currentPage - 1 %>">&lsaquo; Prev</a>
+        <% } else { %>
+            <span class="disabled">&laquo; First</span>
+            <span class="disabled">&lsaquo; Prev</span>
+        <% } %>
+
+        <% if (startPage > 1) { %>
+            <span>...</span>
+        <% } %>
+
+        <% for(int i = startPage; i <= endPage; i++) { %>
+            <% if (i == currentPage) { %>
+                <span class="current-page"><%= i %></span>
+            <% } else { %>
+                <a href="search?query=<%= queryStr %>&page=<%= i %>"><%= i %></a>
+            <% } %>
+        <% } %>
+
+        <% if (endPage < totalPages) { %>
+            <span>...</span>
+        <% } %>
+
+        <% if (currentPage < totalPages) { %>
+            <a href="search?query=<%= queryStr %>&page=<%= currentPage + 1 %>">Next &rsaquo;</a>
+            <a href="search?query=<%= queryStr %>&page=<%= totalPages %>" title="Last Page">Last &raquo;</a>
+        <% } else { %>
+            <span class="disabled">Next &rsaquo;</span>
+            <span class="disabled">Last &raquo;</span>
+        <% } %>
     </div>
 </body>
 </html>

@@ -33,7 +33,7 @@ private static final String PASSWORD = "your_password_here";
 2. File → Open → Select the project folder
 3. Wait for Maven to download dependencies
 4. Install Smart Tomcat plugin:
-   - File → Settings → Plugins → Search "Smart Tomcat" → Install
+    - File → Settings → Plugins → Search "Smart Tomcat" → Install
 
 ## Step 3: Configure Tomcat
 
@@ -41,10 +41,10 @@ private static final String PASSWORD = "your_password_here";
 2. Extract it to a folder (e.g., C:\apache-tomcat-9.0.xx)
 3. In IntelliJ: Run → Edit Configurations → Add → Smart Tomcat
 4. Configure:
-   - Name: "Search Engine"
-   - Tomcat Server: Browse to your Tomcat folder
-   - Deployment Directory: Select `src/main/webapp`
-   - Context Path: `/search-engine`
+    - Name: "Search Engine"
+    - Tomcat Server: Browse to your Tomcat folder
+    - Deployment Directory: Select `src/main/webapp`
+    - Context Path: `/search-engine`
 
 ## Step 4: Build and Run
 
@@ -54,12 +54,12 @@ mvn clean compile
 ```
 
 2. Setup database tables:
-   - Right-click on `DatabaseSetup.java` → Run
-   - This creates the necessary tables
+    - Right-click on `DatabaseSetup.java` → Run
+    - This creates the necessary tables
 
 3. Start the server:
-   - Click the green run button next to "Search Engine" configuration
-   - Or: Run → Run 'Search Engine'
+    - Click the green run button next to "Search Engine" configuration
+    - Or: Run → Run 'Search Engine'
 
 4. Open browser and go to:
 ```
@@ -91,10 +91,10 @@ INSERT INTO pages (url, title, content) VALUES
 
 1. Go to http://localhost:8080/search-engine
 2. Search for terms like:
-   - "java"
-   - "servlet" 
-   - "tutorial"
-   - "programming"
+    - "java"
+    - "servlet"
+    - "tutorial"
+    - "programming"
 
 3. Check search history by clicking "History"
 
