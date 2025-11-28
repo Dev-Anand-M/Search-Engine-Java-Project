@@ -2,6 +2,8 @@ package com.searchengine;
 
 import com.searchengine.scheduler.CrawlerScheduler;
 import com.searchengine.util.DatabaseSetup;
+import com.searchengine.servlet.SearchServlet;
+import com.searchengine.servlet.HistoryServlet;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.startup.Tomcat;
@@ -72,6 +74,22 @@ public class Main {
         }
         
         Context context = tomcat.addWebapp("", webappDir);
+        
+        // Manually register servlets
+        try {
+            org.apache.catalina.Wrapper searchServlet = Tomcat.addServlet(context, "SearchServlet", 
+                new com.searchengine.servlet.SearchServlet());
+            searchServlet.addMapping("/search");
+            
+            org.apache.catalina.Wrapper historyServlet = Tomcat.addServlet(context, "HistoryServlet", 
+                new com.searchengine.servlet.HistoryServlet());
+            historyServlet.addMapping("/history");
+            
+            System.out.println("✓ Servlets registered: /search, /history");
+        } catch (Exception e) {
+            System.err.println("Error registering servlets: " + e.getMessage());
+            e.printStackTrace();
+        }
         
         System.out.println("✓ Server starting on port " + port);
         System.out.println("===================================");
