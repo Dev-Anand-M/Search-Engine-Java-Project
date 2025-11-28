@@ -49,7 +49,7 @@ public class DatabaseConnection {
             if (password == null) password = "kali";
             
             String url = String.format(
-                "jdbc:mysql://%s:%s/%s?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&autoReconnect=true",
+                "jdbc:mysql://%s:%s/%s?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&autoReconnect=true&maxReconnects=10&initialTimeout=2",
                 host, port, database
             );
             

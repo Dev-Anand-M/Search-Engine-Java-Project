@@ -186,8 +186,9 @@ public class WebCrawler {
         String sql = "INSERT INTO pages (url, title, content) VALUES (?, ?, ?) " +
                 "ON DUPLICATE KEY UPDATE title=?, content=?";
 
-        try (Connection conn = DatabaseConnection.getInstance().getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try {
+            Connection conn = DatabaseConnection.getInstance().getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql);
 
             stmt.setString(1, page.getUrl());
             stmt.setString(2, page.getTitle());
@@ -196,6 +197,7 @@ public class WebCrawler {
             stmt.setString(5, page.getContent());
 
             stmt.executeUpdate();
+            stmt.close(); // Only close the statement, not the connection
 
         } catch (SQLException e) {
             System.err.println("Error saving page: " + e.getMessage());
